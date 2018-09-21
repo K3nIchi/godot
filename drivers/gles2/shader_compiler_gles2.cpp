@@ -27,11 +27,12 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
+
 #include "shader_compiler_gles2.h"
 
-#include "os/os.h"
-#include "string_buffer.h"
-#include "string_builder.h"
+#include "core/os/os.h"
+#include "core/string_buffer.h"
+#include "core/string_builder.h"
 
 #define SL ShaderLanguage
 
@@ -161,7 +162,7 @@ static String get_constant_text(SL::DataType p_type, const Vector<SL::ConstantNo
 			return text.as_string();
 
 		} break;
-		case SL::TYPE_FLOAT: return f2sp0(p_values[0].real) + "f";
+		case SL::TYPE_FLOAT: return f2sp0(p_values[0].real);
 		case SL::TYPE_VEC2:
 		case SL::TYPE_VEC3:
 		case SL::TYPE_VEC4: {
@@ -596,6 +597,7 @@ String ShaderCompilerGLES2::_dump_node_code(SL::Node *p_node, int p_level, Gener
 
 								default: {
 									SL::DataType type = op_node->arguments[3]->get_datatype();
+									// FIXME: Proper error print or graceful handling
 									print_line(String("uhhhh invalid mix with type: ") + itos(type));
 								} break;
 							}

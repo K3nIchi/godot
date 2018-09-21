@@ -31,13 +31,13 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "hash_map.h"
-#include "list.h"
-#include "map.h"
-#include "os/rw_lock.h"
-#include "set.h"
-#include "variant.h"
-#include "vmap.h"
+#include "core/hash_map.h"
+#include "core/list.h"
+#include "core/map.h"
+#include "core/os/rw_lock.h"
+#include "core/set.h"
+#include "core/variant.h"
+#include "core/vmap.h"
 
 #define VARIANT_ARG_LIST const Variant &p_arg1 = Variant(), const Variant &p_arg2 = Variant(), const Variant &p_arg3 = Variant(), const Variant &p_arg4 = Variant(), const Variant &p_arg5 = Variant()
 #define VARIANT_ARG_PASS p_arg1, p_arg2, p_arg3, p_arg4, p_arg5
@@ -490,9 +490,11 @@ private:
 	void _set_indexed_bind(const NodePath &p_name, const Variant &p_value);
 	Variant _get_indexed_bind(const NodePath &p_name) const;
 
-	void *_script_instance_bindings[MAX_SCRIPT_INSTANCE_BINDINGS];
-
 	void property_list_changed_notify();
+
+	friend class Reference;
+	uint32_t instance_binding_count;
+	void *_script_instance_bindings[MAX_SCRIPT_INSTANCE_BINDINGS];
 
 protected:
 	virtual void _initialize_classv() { initialize_class(); }
@@ -777,6 +779,6 @@ public:
 };
 
 //needed by macros
-#include "class_db.h"
+#include "core/class_db.h"
 
 #endif

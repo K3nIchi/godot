@@ -31,8 +31,8 @@
 #include "space_sw.h"
 
 #include "collision_solver_sw.h"
+#include "core/project_settings.h"
 #include "physics_server_sw.h"
-#include "project_settings.h"
 
 _FORCE_INLINE_ static bool _can_collide_with(CollisionObjectSW *p_object, uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas) {
 
@@ -105,7 +105,7 @@ bool PhysicsDirectSpaceStateSW::intersect_ray(const Vector3 &p_from, const Vecto
 
 	int amount = space->broadphase->cull_segment(begin, end, space->intersection_query_results, SpaceSW::INTERSECTION_QUERY_MAX, space->intersection_query_subindex_results);
 
-	//todo, create another array tha references results, compute AABBs and check closest point to ray origin, sort, and stop evaluating results when beyond first collision
+	//todo, create another array that references results, compute AABBs and check closest point to ray origin, sort, and stop evaluating results when beyond first collision
 
 	bool collided = false;
 	Vector3 res_point, res_normal;
@@ -231,11 +231,6 @@ bool PhysicsDirectSpaceStateSW::cast_motion(const RID &p_shape, const Transform 
 	aabb = aabb.merge(AABB(aabb.position + p_motion, aabb.size)); //motion
 	aabb = aabb.grow(p_margin);
 
-	/*
-	if (p_motion!=Vector3())
-		print_line(p_motion);
-	*/
-
 	int amount = space->broadphase->cull_aabb(aabb, space->intersection_query_results, SpaceSW::INTERSECTION_QUERY_MAX, space->intersection_query_subindex_results);
 
 	real_t best_safe = 1;
@@ -267,7 +262,6 @@ bool PhysicsDirectSpaceStateSW::cast_motion(const RID &p_shape, const Transform 
 		Transform col_obj_xform = col_obj->get_transform() * col_obj->get_shape_transform(shape_idx);
 		//test initial overlap, does it collide if going all the way?
 		if (CollisionSolverSW::solve_distance(&mshape, p_xform, col_obj->get_shape(shape_idx), col_obj_xform, point_A, point_B, aabb, &sep_axis)) {
-			//print_line("failed motion cast (no collision)");
 			continue;
 		}
 
@@ -275,7 +269,6 @@ bool PhysicsDirectSpaceStateSW::cast_motion(const RID &p_shape, const Transform 
 		sep_axis = p_motion.normalized();
 
 		if (!CollisionSolverSW::solve_distance(shape, p_xform, col_obj->get_shape(shape_idx), col_obj_xform, point_A, point_B, aabb, &sep_axis)) {
-			//print_line("failed motion cast (no collision)");
 			return false;
 		}
 
@@ -298,7 +291,6 @@ bool PhysicsDirectSpaceStateSW::cast_motion(const RID &p_shape, const Transform 
 
 			if (collided) {
 
-				//print_line(itos(i)+": "+rtos(ofs));
 				hi = ofs;
 			} else {
 
@@ -375,9 +367,6 @@ bool PhysicsDirectSpaceStateSW::collide_shape(RID p_shape, const Transform &p_sh
 		if (p_exclude.has(col_obj->get_self())) {
 			continue;
 		}
-
-		//print_line("AGAINST: "+itos(col_obj->get_self().get_id())+":"+itos(shape_idx));
-		//print_line("THE ABBB: "+(col_obj->get_transform() * col_obj->get_shape_transform(shape_idx)).xform(col_obj->get_shape(shape_idx)->get_aabb()));
 
 		if (CollisionSolverSW::solve_static(shape, p_shape_xform, col_obj->get_shape(shape_idx), col_obj->get_transform() * col_obj->get_shape_transform(shape_idx), cbkres, cbkptr, NULL, p_margin)) {
 			collided = true;
@@ -832,13 +821,11 @@ bool SpaceSW::test_body_motion(BodySW *p_body, const Transform &p_from, const Ve
 				Transform col_obj_xform = col_obj->get_transform() * col_obj->get_shape_transform(shape_idx);
 				//test initial overlap, does it collide if going all the way?
 				if (CollisionSolverSW::solve_distance(&mshape, body_shape_xform, col_obj->get_shape(shape_idx), col_obj_xform, point_A, point_B, motion_aabb, &sep_axis)) {
-					//print_line("failed motion cast (no collision)");
 					continue;
 				}
 				sep_axis = p_motion.normalized();
 
 				if (!CollisionSolverSW::solve_distance(body_shape, body_shape_xform, col_obj->get_shape(shape_idx), col_obj_xform, point_A, point_B, motion_aabb, &sep_axis)) {
-					//print_line("failed motion cast (no collision)");
 					stuck = true;
 					break;
 				}
@@ -862,7 +849,6 @@ bool SpaceSW::test_body_motion(BodySW *p_body, const Transform &p_from, const Ve
 
 					if (collided) {
 
-						//print_line(itos(i)+": "+rtos(ofs));
 						hi = ofs;
 					} else {
 

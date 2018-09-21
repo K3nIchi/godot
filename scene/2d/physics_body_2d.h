@@ -31,10 +31,10 @@
 #ifndef PHYSICS_BODY_2D_H
 #define PHYSICS_BODY_2D_H
 
+#include "core/vset.h"
 #include "scene/2d/collision_object_2d.h"
 #include "scene/resources/physics_material.h"
 #include "servers/physics_2d_server.h"
-#include "vset.h"
 
 class KinematicCollision2D;
 
@@ -49,6 +49,7 @@ class PhysicsBody2D : public CollisionObject2D {
 	uint32_t _get_layers() const;
 
 protected:
+	void _notification(int p_what);
 	PhysicsBody2D(Physics2DServer::BodyMode p_mode);
 
 	static void _bind_methods();
